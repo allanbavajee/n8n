@@ -3,7 +3,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
-  res.send("Hello from WireCore Solutions!");
+  res.send("Hello from Social Flow!");
 });
 
 app.listen(port, () => {
