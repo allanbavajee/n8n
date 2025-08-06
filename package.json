@@ -1,5 +1,5 @@
 {
-  "name": "n8n-extension",
+  "name": "social-flow",
   "version": "1.0.0",
   "description": "Custom extension for n8n",
   "main": "index.js",
