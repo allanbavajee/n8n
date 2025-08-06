@@ -31,6 +31,8 @@ docker run -it --rm --name n8n -p 5678:5678 -v n8n_data:/home/node/.n8n docker.n
 
 Access the editor at http://localhost:5678
 
+Site en ligne : [https://n8n-extension-ffua85su3-allan-bavajees-projects.vercel.app](https://n8n-extension-ffua85su3-allan-bavajees-projects.vercel.app)
+
 ## Resources
 
 - 📚 [Documentation](https://docs.n8n.io)
