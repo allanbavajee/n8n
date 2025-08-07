@@ -1,92 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social Flow</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f2f2f2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            animation: fadeIn 1s ease-in-out;
-        }
+import React, { useState } from "react";
 
-        .container {
-            background-color: #2f2f2f;
-            color: #fff;
-            padding: 40px 60px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 90%;
-            width: 400px;
-        }
+export default function Home() {
+  const [status, setStatus] = useState("En attente...");
+  const [loading, setLoading] = useState(false);
 
-        h1 {
-            margin-bottom: 20px;
-            font-size: 28px;
-        }
+  const handleClick = async () => {
+    setLoading(true);
+    setStatus("Recherche des données...");
+    try {
+      const res = await fetch("/api/flow", { method: "POST" });
+      const data = await res.json();
+      if (data.success) {
+        setStatus("Publication effectuée avec succès ✅");
+      } else {
+        setStatus("Échec de la publication ❌");
+      }
+    } catch (error) {
+      setStatus("Erreur lors du processus 😓");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        button {
-            background-color: #00c38a;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+  return (
+    <main className="min-h-screen bg-neutral-100 flex items-center justify-center px-4 py-8">
+      <div className="max-w-2xl w-full bg-white rounded-2xl shadow-lg p-8">
+        {/* Titre et accroche */}
+        <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">
+          Social Flow 🚀
+        </h1>
+        <p className="text-center text-gray-600 mb-6">
+          Automatisez vos publications sociales depuis Google Sheets, en un clic.
+        </p>
 
-        button:hover {
-            background-color: #00a573;
-        }
+        {/* Schéma simplifié du flow */}
+        <div className="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-800 mb-2 text-center">🔄 Fonctionnement :</h2>
+          <ul className="space-y-2 text-gray-700 text-sm">
+            <li>📥 Vous ajoutez vos posts dans Google Sheets</li>
+            <li>🔍 Social Flow vérifie les nouvelles entrées</li>
+            <li>📤 Les publications sont envoyées automatiquement</li>
+            <li>📈 Gagnez du temps, restez constant sur les réseaux !</li>
+          </ul>
+        </div>
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        {/* Bouton d’action */}
+        <div className="flex flex-col items-center">
+          <button
+            onClick={handleClick}
+            className={`w-full sm:w-auto px-6 py-3 rounded-lg font-semibold text-white shadow-md transition ${
+              loading ? "bg-gray-400 cursor-wait" : "bg-green-600 hover:bg-green-700"
+            }`}
+            disabled={loading}
+          >
+            {loading ? "En cours..." : "Lancer Social Flow"}
+          </button>
 
-        @media (max-width: 600px) {
-            .container {
-                padding: 30px 20px;
-                width: 90%;
-            }
-
-            h1 {
-                font-size: 22px;
-            }
-
-            button {
-                font-size: 14px;
-                padding: 10px 20px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Bienvenue sur Social Flow 🚀</h1>
-        <button onclick="startFlow()">Lancer le Flow</button>
-    </div>
-
-    <script>
-        function startFlow() {
-            alert("Flow en cours... (cette alerte sera remplacée par une vraie action bientôt)");
-            // Tu ajouteras ici la connexion au Google Sheet et la publication
-        }
-    </script>
-</body>
-</html>
+          {/* Statut dynamique */}
+          <p className="mt-4 text-sm text-gray-700">{status}</p>
+        </div>
+      </div>
+    </main>
+  );
+}
