@@ -50,45 +50,64 @@
       </button>
       <p id="statusText" class="mt-4 text-sm text-gray-700">En attente...</p>
     </div>
+
+    <!-- Zone affichage des données Google Sheets -->
+    <div id="sheetData" class="mt-8 p-4 bg-gray-100 rounded-lg max-h-60 overflow-auto text-left text-gray-800"></div>
   </div>
 
-  <!-- JS Simulation -->
+  <!-- JS Simulation + récupération données -->
   <script>
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbziB47bxizzP9zz7oNr9OUc_nUMC0hL_wOZ5p1ouMWh5tXo4lD0nDZuNzPKkG29_KUe/exec';
+    // Ton URL Apps Script déployé en web app
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbziB47bxizzP9zz7oNr9OUc_nUMC0hL_wOZ5p1ouMWh5tXo4lD0nDZuNzPKkG29_KUe/exec';
 
-  function afficherDonneesSheet() {
-    fetch(APPS_SCRIPT_URL)
-      .then(response => response.json())
-      .then(data => {
-        const container = document.getElementById('sheetData');
-        container.innerHTML = ''; // vider avant
+    function lancerSocialFlow() {
+      const btn = document.getElementById("launchBtn");
+      const status = document.getElementById("statusText");
 
-        if (data.length === 0) {
-          container.innerText = 'Aucune donnée trouvée dans Google Sheets.';
-          return;
-        }
+      btn.disabled = true;
+      btn.classList.add("bg-gray-400", "cursor-wait");
+      btn.innerText = "En cours...";
+      status.innerText = "Recherche des données...";
 
-        data.forEach(entry => {
-          const div = document.createElement('div');
-          div.className = 'entry border-b border-gray-300 py-2';
-          div.innerHTML = `
-            <strong>${entry['Plateforme'] || 'N/A'}</strong> — 
-            ${entry['Date'] || 'N/A'} à ${entry['Heure'] || 'N/A'} : 
-            <em>${entry['Message'] || ''}</em>
-          `;
-          container.appendChild(div);
+      fetch(APPS_SCRIPT_URL)
+        .then(response => response.json())
+        .then(data => {
+          afficherDonnees(data);
+          status.innerText = "Publication effectuée avec succès ✅";
+        })
+        .catch(err => {
+          status.innerText = "Erreur lors de la récupération des données.";
+          console.error(err);
+        })
+        .finally(() => {
+          btn.innerText = "Lancer Social Flow";
+          btn.classList.remove("bg-gray-400", "cursor-wait");
+          btn.classList.add("bg-green-600", "hover:bg-green-700");
+          btn.disabled = false;
         });
-      })
-      .catch(err => {
-        const container = document.getElementById('sheetData');
-        container.innerText = 'Erreur lors de la récupération des données.';
-        console.error(err);
-      });
-  }
+    }
 
-  // Charger les données au chargement de la page
-  window.onload = afficherDonneesSheet;
-</script>
+    function afficherDonnees(data) {
+      const container = document.getElementById('sheetData');
+      container.innerHTML = ''; // vider avant affichage
+
+      if (!data || data.length === 0) {
+        container.innerText = 'Aucune donnée trouvée dans Google Sheets.';
+        return;
+      }
+
+      data.forEach(entry => {
+        const div = document.createElement('div');
+        div.className = 'entry border-b border-gray-300 py-2';
+        div.innerHTML = `
+          <strong>${entry['Plateforme'] || 'N/A'}</strong> — 
+          ${entry['Date'] || 'N/A'} à ${entry['Heure'] || 'N/A'} : 
+          <em>${entry['Message'] || ''}</em>
+        `;
+        container.appendChild(div);
+      });
+    }
+  </script>
 
 </body>
 </html>
