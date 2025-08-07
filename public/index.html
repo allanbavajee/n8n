@@ -1,65 +1,66 @@
-import React, { useState } from "react";
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Social Flow</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-neutral-100 flex items-center justify-center min-h-screen px-4 py-8">
 
-export default function Home() {
-  const [status, setStatus] = useState("En attente...");
-  const [loading, setLoading] = useState(false);
+  <div class="max-w-2xl w-full bg-white rounded-2xl shadow-lg p-8">
+    <!-- Titre et accroche -->
+    <h1 class="text-3xl font-bold text-gray-900 mb-2 text-center">
+      Social Flow 🚀
+    </h1>
+    <p class="text-center text-gray-600 mb-6">
+      Automatisez vos publications sociales depuis Google Sheets, en un clic.
+    </p>
 
-  const handleClick = async () => {
-    setLoading(true);
-    setStatus("Recherche des données...");
-    try {
-      const res = await fetch("/api/flow", { method: "POST" });
-      const data = await res.json();
-      if (data.success) {
-        setStatus("Publication effectuée avec succès ✅");
-      } else {
-        setStatus("Échec de la publication ❌");
-      }
-    } catch (error) {
-      setStatus("Erreur lors du processus 😓");
-    } finally {
-      setLoading(false);
+    <!-- Schéma de fonctionnement -->
+    <div class="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-800 mb-2 text-center">🔄 Fonctionnement :</h2>
+      <ul class="space-y-2 text-gray-700 text-sm">
+        <li>📥 Vous ajoutez vos posts dans Google Sheets</li>
+        <li>🔍 Social Flow vérifie les nouvelles entrées</li>
+        <li>📤 Les publications sont envoyées automatiquement</li>
+        <li>📈 Gagnez du temps, restez constant sur les réseaux !</li>
+      </ul>
+    </div>
+
+    <!-- Bouton + statut dynamique (simulé ici en JS) -->
+    <div class="flex flex-col items-center">
+      <button
+        onclick="lancerSocialFlow()"
+        id="launchBtn"
+        class="w-full sm:w-auto px-6 py-3 rounded-lg font-semibold text-white bg-green-600 hover:bg-green-700 shadow-md transition"
+      >
+        Lancer Social Flow
+      </button>
+      <p id="statusText" class="mt-4 text-sm text-gray-700">En attente...</p>
+    </div>
+  </div>
+
+  <!-- Simu JS -->
+  <script>
+    function lancerSocialFlow() {
+      const btn = document.getElementById("launchBtn");
+      const status = document.getElementById("statusText");
+
+      btn.disabled = true;
+      btn.classList.add("bg-gray-400", "cursor-wait");
+      btn.innerText = "En cours...";
+      status.innerText = "Recherche des données...";
+
+      setTimeout(() => {
+        status.innerText = "Publication effectuée avec succès ✅";
+        btn.innerText = "Lancer Social Flow";
+        btn.classList.remove("bg-gray-400", "cursor-wait");
+        btn.classList.add("bg-green-600", "hover:bg-green-700");
+        btn.disabled = false;
+      }, 3000);
     }
-  };
+  </script>
 
-  return (
-    <main className="min-h-screen bg-neutral-100 flex items-center justify-center px-4 py-8">
-      <div className="max-w-2xl w-full bg-white rounded-2xl shadow-lg p-8">
-        {/* Titre et accroche */}
-        <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">
-          Social Flow 🚀
-        </h1>
-        <p className="text-center text-gray-600 mb-6">
-          Automatisez vos publications sociales depuis Google Sheets, en un clic.
-        </p>
-
-        {/* Schéma simplifié du flow */}
-        <div className="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800 mb-2 text-center">🔄 Fonctionnement :</h2>
-          <ul className="space-y-2 text-gray-700 text-sm">
-            <li>📥 Vous ajoutez vos posts dans Google Sheets</li>
-            <li>🔍 Social Flow vérifie les nouvelles entrées</li>
-            <li>📤 Les publications sont envoyées automatiquement</li>
-            <li>📈 Gagnez du temps, restez constant sur les réseaux !</li>
-          </ul>
-        </div>
-
-        {/* Bouton d’action */}
-        <div className="flex flex-col items-center">
-          <button
-            onClick={handleClick}
-            className={`w-full sm:w-auto px-6 py-3 rounded-lg font-semibold text-white shadow-md transition ${
-              loading ? "bg-gray-400 cursor-wait" : "bg-green-600 hover:bg-green-700"
-            }`}
-            disabled={loading}
-          >
-            {loading ? "En cours..." : "Lancer Social Flow"}
-          </button>
-
-          {/* Statut dynamique */}
-          <p className="mt-4 text-sm text-gray-700">{status}</p>
-        </div>
-      </div>
-    </main>
-  );
-}
+</body>
+</html>
