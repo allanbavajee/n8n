@@ -54,24 +54,41 @@
 
   <!-- JS Simulation -->
   <script>
-    function lancerSocialFlow() {
-      const btn = document.getElementById("launchBtn");
-      const status = document.getElementById("statusText");
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbziB47bxizzP9zz7oNr9OUc_nUMC0hL_wOZ5p1ouMWh5tXo4lD0nDZuNzPKkG29_KUe/exec';
 
-      btn.disabled = true;
-      btn.classList.add("bg-gray-400", "cursor-wait");
-      btn.innerText = "En cours...";
-      status.innerText = "Recherche des données...";
+  function afficherDonneesSheet() {
+    fetch(APPS_SCRIPT_URL)
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById('sheetData');
+        container.innerHTML = ''; // vider avant
 
-      setTimeout(() => {
-        status.innerText = "Publication effectuée avec succès ✅";
-        btn.innerText = "Lancer Social Flow";
-        btn.classList.remove("bg-gray-400", "cursor-wait");
-        btn.classList.add("bg-green-600", "hover:bg-green-700");
-        btn.disabled = false;
-      }, 3000);
-    }
-  </script>
+        if (data.length === 0) {
+          container.innerText = 'Aucune donnée trouvée dans Google Sheets.';
+          return;
+        }
+
+        data.forEach(entry => {
+          const div = document.createElement('div');
+          div.className = 'entry border-b border-gray-300 py-2';
+          div.innerHTML = `
+            <strong>${entry['Plateforme'] || 'N/A'}</strong> — 
+            ${entry['Date'] || 'N/A'} à ${entry['Heure'] || 'N/A'} : 
+            <em>${entry['Message'] || ''}</em>
+          `;
+          container.appendChild(div);
+        });
+      })
+      .catch(err => {
+        const container = document.getElementById('sheetData');
+        container.innerText = 'Erreur lors de la récupération des données.';
+        console.error(err);
+      });
+  }
+
+  // Charger les données au chargement de la page
+  window.onload = afficherDonneesSheet;
+</script>
 
 </body>
 </html>
