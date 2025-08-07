@@ -23,6 +23,31 @@
           <div class="text-3xl">📥</div>
           <p class="mt-1 max-w-xs">Ajoutez vos posts dans Sheets</p>
         </div>
+				<form id="postForm">
+      <select name="platform" required>
+        <option value="">Choisir la plateforme</option>
+        <option value="Facebook">Facebook</option>
+        <option value="Instagram">Instagram</option>
+        <option value="Tiktok">Tiktok</option>
+      </select>
+
+      <textarea name="message" placeholder="Message principal" required></textarea>
+      <textarea name="texte" placeholder="Texte complémentaire"></textarea>
+      <input type="url" name="imageUrl" placeholder="Lien de l'image">
+      <input type="url" name="videoUrl" placeholder="Lien de la vidéo">
+
+      <select name="statut">
+        <option value="Prévu">Prévu</option>
+        <option value="Publié">Publié</option>
+        <option value="Brouillon">Brouillon</option>
+      </select>
+
+      <button type="submit">Ajouter le post</button>
+    </form>
+
+    <script>
+      // Ici tu mettras le code JavaScript pour envoyer les données au serveur Apps Script
+    </script>
         <div class="text-2xl sm:text-3xl">➡️</div>
         <div class="flex flex-col items-center">
           <div class="text-3xl">🔍</div>
@@ -74,7 +99,7 @@
   </div>
 
   <script>
-    const APPS_SCRIPT_BASE_URL = 'https://script.google.com/macros/s/AKfycbyDsluaxZsDcede-PGDOcN2E1OrzwHAH8kBlyptnKDmgGGNpMGJiCkri8xlCg9d1yE6/exec';
+    const APPS_SCRIPT_BASE_URL = 'https://script.google.com/macros/s/AKfycbzZ1EZ_atliZPVphY9cxh40lxyVRo7_AEhOLAl7FpLtF33zbelrGYG3nhMW5RUfmNSk/exec';
 
     function lancerSocialFlow() {
       const btn = document.getElementById("launchBtn");
