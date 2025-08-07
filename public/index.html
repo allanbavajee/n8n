@@ -3,110 +3,150 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Social Flow - Formulaire de publication</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    label { display: block; margin-top: 10px; }
-    input, textarea, select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
-    button { margin-top: 15px; padding: 10px 20px; font-size: 16px; }
-    .status { margin-top: 15px; font-weight: bold; }
-  </style>
+  <title>Social Flow</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 </head>
-<body>
+<body class="bg-neutral-100 flex items-center justify-center min-h-screen px-4 py-10">
+  <div class="max-w-3xl w-full bg-white rounded-2xl shadow-lg p-8">
 
-  <h1>Social Flow - Publier un post</h1>
+    <!-- Titre dans un rectangle bleu -->
+    <div class="bg-blue-600 rounded-lg py-4 px-6 mb-6 text-center">
+      <h1 class="text-4xl font-bold text-white">Social Flow 🚀</h1>
+      <p class="text-white text-base mt-3">Automatisez vos publications sociales depuis Google Sheets, en un clic.</p>
+    </div>
 
-  <form id="postForm">
-    <label for="sheetId">ID Google Sheet :</label>
-    <input type="text" id="sheetId" name="sheetId" required placeholder="Entrez l'ID de votre Google Sheet" />
+    <!-- Schéma horizontal -->
+    <div class="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">🔄 Fonctionnement :</h2>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-6 text-center text-gray-700 text-sm">
+        <div class="flex flex-col items-center">
+          <div class="text-3xl">📥</div>
+          <p class="mt-1 max-w-xs">Ajoutez vos posts dans Sheets</p>
+        </div>
+        <div class="text-2xl sm:text-3xl">➡️</div>
+        <div class="flex flex-col items-center">
+          <div class="text-3xl">🔍</div>
+          <p class="mt-1 max-w-xs">Social Flow vérifie les entrées</p>
+        </div>
+        <div class="text-2xl sm:text-3xl">➡️</div>
+        <div class="flex flex-col items-center">
+          <div class="text-3xl">📤</div>
+          <p class="mt-1 max-w-xs">Les posts sont publiés automatiquement</p>
+        </div>
+      </div>
+    </div>
 
-    <label for="platform">Plateforme :</label>
-    <select id="platform" name="platform" required>
-      <option value="">-- Choisir une plateforme --</option>
-      <option value="Facebook">Facebook</option>
-      <option value="Instagram">Instagram</option>
-      <option value="Twitter">Twitter</option>
-      <option value="LinkedIn">LinkedIn</option>
-    </select>
+    <!-- Input Google Sheet ID/URL avec aide centrée -->
+<div class="mb-6 text-center">
+  <label for="sheetInput" class="block font-semibold mb-2 text-center">
+    📎 Collez l'ID ou l'URL de votre Google Sheet :
+  </label>
+  <input
+    type="text"
+    id="sheetInput"
+    placeholder="Exemple : 1HdxIB4vFde1gcd01Cb74doAg2y3B58_wkC48uJ423dU"
+    class="w-full mb-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-center"
+    value=""
+  />
+  <p class="text-sm text-gray-600 mt-2">
+    🔍 L’<strong>ID</strong> se trouve dans l’URL de votre feuille Google Sheets :<br>
+    <code class="bg-gray-100 px-2 py-1 rounded text-gray-700 inline-block mt-2">
+      https://docs.google.com/spreadsheets/d/<strong class="text-blue-600">VOTRE_ID_ICI</strong>/edit
+    </code>
+  </p>
+</div>
 
-    <label for="message">Message :</label>
-    <textarea id="message" name="message" rows="4" required placeholder="Votre message"></textarea>
+    <!-- Bouton + statut -->
+    <div class="flex flex-col items-center">
+      <button
+        onclick="lancerSocialFlow()"
+        id="launchBtn"
+        class="w-full sm:w-auto px-6 py-3 rounded-lg font-semibold text-white bg-green-600 hover:bg-green-700 shadow-md transition"
+      >
+        Lancer Social Flow
+      </button>
+      <p id="statusText" class="mt-4 text-sm text-gray-700">En attente...</p>
+    </div>
 
-    <label for="texte">Texte (optionnel) :</label>
-    <textarea id="texte" name="texte" rows="2" placeholder="Texte additionnel"></textarea>
+    <!-- Zone affichage des données Google Sheets -->
+    <div id="sheetData" class="mt-8 p-4 bg-gray-100 rounded-lg max-h-60 overflow-auto text-left text-gray-800"></div>
 
-    <label for="imageUrl">Image URL (optionnel) :</label>
-    <input type="url" id="imageUrl" name="imageUrl" placeholder="https://..." />
-
-    <label for="videoUrl">Vidéo URL (optionnel) :</label>
-    <input type="url" id="videoUrl" name="videoUrl" placeholder="https://..." />
-
-    <label for="statut">Statut :</label>
-    <select id="statut" name="statut">
-      <option value="Prévu" selected>Prévu</option>
-      <option value="Publié">Publié</option>
-      <option value="Annulé">Annulé</option>
-    </select>
-
-    <button type="submit">Envoyer</button>
-  </form>
-
-  <div class="status" id="status"></div>
+  </div>
 
   <script>
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzlyKjS89jIO_QPnEaE7ybscAttaSZJ_RjcwC1r2HfbwrN_NCfuN_MxrnDfzTiVZ3Wq/exec';
+    const APPS_SCRIPT_BASE_URL = 'https://script.google.com/macros/s/AKfycbzTzVvEUguu8YBtMS8CSrjR_paDmgCk_EHqa-afSpOEA7LP2FuinWVaFXeTBpEttNIB/exec';
 
-    document.getElementById('postForm').addEventListener('submit', function(e) {
-      e.preventDefault();
+    function lancerSocialFlow() {
+      const btn = document.getElementById("launchBtn");
+      const status = document.getElementById("statusText");
+      const sheetInput = document.getElementById("sheetInput");
+      const sheetIdRaw = sheetInput.value.trim();
 
-      const form = e.target;
-      const statusDiv = document.getElementById('status');
-
-      const data = {
-        sheetId: form.sheetId.value.trim(),
-        platform: form.platform.value,
-        message: form.message.value.trim(),
-        texte: form.texte.value.trim(),
-        imageUrl: form.imageUrl.value.trim(),
-        videoUrl: form.videoUrl.value.trim(),
-        statut: form.statut.value
-      };
-
-      if (!data.sheetId || !data.platform || !data.message) {
-        statusDiv.textContent = "Veuillez remplir au minimum l'ID de la feuille, la plateforme et le message.";
-        statusDiv.style.color = "red";
+      if (!sheetIdRaw) {
+        alert("Veuillez saisir un ID ou URL valide de Google Sheet.");
         return;
       }
 
-      statusDiv.textContent = "Envoi en cours...";
-      statusDiv.style.color = "black";
+      const sheetId = extractSheetId(sheetIdRaw);
+      if (!sheetId) {
+        alert("L'ID de Google Sheet est invalide.");
+        return;
+      }
 
-      fetch(APPS_SCRIPT_URL + '?sheetId=' + encodeURIComponent(data.sheetId), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(data)
-      })
-      .then(response => response.json())
-      .then(json => {
-        if (json.success) {
-          statusDiv.textContent = `Post ajouté avec l'ID ${json.id} ✅`;
-          statusDiv.style.color = "green";
-          form.reset();
-        } else if (json.error) {
-          statusDiv.textContent = "Erreur : " + json.error;
-          statusDiv.style.color = "red";
-        } else {
-          statusDiv.textContent = "Erreur inconnue.";
-          statusDiv.style.color = "red";
-        }
-      })
-      .catch(err => {
-        statusDiv.textContent = "Erreur réseau ou serveur.";
-        statusDiv.style.color = "red";
-        console.error(err);
+      btn.disabled = true;
+      btn.classList.add("bg-gray-400", "cursor-wait");
+      btn.innerText = "En cours...";
+      status.innerText = "Recherche des données...";
+      document.getElementById("sheetData").innerHTML = "";
+
+      fetch(`${APPS_SCRIPT_BASE_URL}?sheetId=1HdxIB4vFde1gcd01Cb74doAg2y3B58_wkC48uJ423dU`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            status.innerText = "Erreur : " + data.error;
+            return;
+          }
+          afficherDonnees(data);
+          status.innerText = "Publication effectuée avec succès ✅";
+        })
+        .catch(err => {
+          status.innerText = "Erreur lors de la récupération des données.";
+          console.error(err);
+        })
+        .finally(() => {
+          btn.innerText = "Lancer Social Flow";
+          btn.classList.remove("bg-gray-400", "cursor-wait");
+          btn.classList.add("bg-green-600", "hover:bg-green-700");
+          btn.disabled = false;
+        });
+    }
+
+    function extractSheetId(input) {
+      const idRegex = /[-\w]{25,}/;
+      const match = input.match(idRegex);
+      return match ? match[0] : null;
+    }
+
+    function afficherDonnees(data) {
+      const container = document.getElementById('sheetData');
+      container.innerHTML = '';
+
+      if (!data || data.length === 0) {
+        container.innerText = 'Aucune donnée trouvée dans Google Sheets.';
+        return;
+      }
+
+      data.forEach(entry => {
+        const div = document.createElement('div');
+        div.className = 'entry border-b border-gray-300 py-2';
+        div.innerHTML = `
+          <strong>${entry.Plateforme || 'N/A'}</strong> — 
+          ${entry.Date || 'N/A'} à ${entry.Heure || 'N/A'} : 
+          <em>${entry.Message || ''}</em>
+        `;
+        container.appendChild(div);
       });
-    });
+    }
   </script>
-
 </body>
 </html>
