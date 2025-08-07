@@ -1,7 +1,7 @@
 {
-  "name": "social-flow",
+  "name": "SocialBridgeHub",
   "version": "1.0.0",
-  "description": "Custom extension for n8n",
+  "description": "Custom extension for SocialBridgeHub",
   "main": "index.js",
   "type": "module",
   "scripts": {
