@@ -99,7 +99,7 @@
       status.innerText = "Recherche des données...";
       document.getElementById("sheetData").innerHTML = "";
 
-      fetch(APPS_SCRIPT_URL)
+      fetch(`${APPS_SCRIPT_BASE_URL}?sheetId=${sheetId}`)
         .then(response => response.json())
         .then(data => {
           if (data.error) {
