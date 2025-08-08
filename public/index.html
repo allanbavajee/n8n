@@ -143,13 +143,30 @@
     }
 
     function displayData(data) {
-      const container = document.getElementById('sheetData');
-      container.innerHTML = '';
+ 	 		const container = document.getElementById('sheetData');
+  		container.innerHTML = '';
 
-      if (!data || data.length === 0) {
-        container.innerText = 'No data found in Google Sheets.';
-        return;
-      }
+  		if (!data || data.length === 0) {
+   			container.innerText = 'No data found in Google Sheets.';
+    		return;
+  		}
+
+ 			data.forEach(item => {
+    		const title = item["Title"] || 'N/A';
+    		const caption = item["Caption (texte)"] || '';
+    		const platforms = item["Plateforme(s)"] || 'N/A';
+    		const status = item["Status"] || 'N/A';
+
+    		const div = document.createElement('div');
+    		div.className = 'entry border-b border-gray-300 py-2';
+    		div.innerHTML = `
+      		<strong>${title}</strong> — 
+      		<em>${caption}</em> on <strong>${platforms}</strong> [Status: ${status}]
+    		`;
+    		container.appendChild(div);
+ 		 });
+		}
+
 
       data.forEach(entry => {
         const div = document.createElement('div');
