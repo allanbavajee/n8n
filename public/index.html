@@ -87,98 +87,85 @@
 
   <script>
     function startSocialFlow() {
-      const btn = document.getElementById("launchBtn");
-      const status = document.getElementById("statusText");
-      const scriptUrl = document.getElementById("scriptUrl").value.trim();
-      const sheetIdRaw = document.getElementById("sheetInput").value.trim();
+  const btn = document.getElementById("launchBtn");
+  const status = document.getElementById("statusText");
+  const scriptUrl = document.getElementById("scriptUrl").value.trim();
+  const sheetIdRaw = document.getElementById("sheetInput").value.trim();
 
-      if (!scriptUrl) {
-        alert("Please enter your Google Apps Script WebApp URL.");
+  if (!scriptUrl) {
+    alert("Please enter your Google Apps Script WebApp URL.");
+    return;
+  }
+
+  if (!sheetIdRaw) {
+    alert("Please enter a valid Google Sheet ID or URL.");
+    return;
+  }
+
+  const sheetId = extractSheetId(sheetIdRaw);
+  if (!sheetId) {
+    alert("Invalid Google Sheet ID.");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.classList.add("bg-gray-400", "cursor-wait");
+  btn.innerText = "Processing...";
+  status.innerText = "Fetching data...";
+  document.getElementById("sheetData").innerHTML = "";
+
+  fetch(`${scriptUrl}?sheetId=${sheetId}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        status.innerText = "Error: " + data.error;
         return;
       }
+      displayData(data);
+      status.innerText = "Data fetched successfully ✅";
+    })
+    .catch(err => {
+      status.innerText = "Error while fetching data.";
+      console.error(err);
+    })
+    .finally(() => {
+      btn.innerText = "Launch Social Flow";
+      btn.classList.remove("bg-gray-400", "cursor-wait");
+      btn.classList.add("bg-green-600", "hover:bg-green-700");
+      btn.disabled = false;
+    });
+}
 
-      if (!sheetIdRaw) {
-        alert("Please enter a valid Google Sheet ID or URL.");
-        return;
-      }
+function extractSheetId(input) {
+  const idRegex = /[-\w]{25,}/;
+  const match = input.match(idRegex);
+  return match ? match[0] : null;
+}
 
-      const sheetId = extractSheetId(sheetIdRaw);
-      if (!sheetId) {
-        alert("Invalid Google Sheet ID.");
-        return;
-      }
+function displayData(data) {
+  const container = document.getElementById('sheetData');
+  container.innerHTML = '';
 
-      btn.disabled = true;
-      btn.classList.add("bg-gray-400", "cursor-wait");
-      btn.innerText = "Processing...";
-      status.innerText = "Fetching data...";
-      document.getElementById("sheetData").innerHTML = "";
+  if (!data || data.length === 0) {
+    container.innerText = 'No data found in Google Sheets.';
+    return;
+  }
 
-      fetch(`${scriptUrl}?sheetId=${sheetId}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.error) {
-            status.innerText = "Error: " + data.error;
-            return;
-          }
-          displayData(data);
-          status.innerText = "Data fetched successfully ✅";
-        })
-        .catch(err => {
-          status.innerText = "Error while fetching data.";
-          console.error(err);
-        })
-        .finally(() => {
-          btn.innerText = "Launch Social Flow";
-          btn.classList.remove("bg-gray-400", "cursor-wait");
-          btn.classList.add("bg-green-600", "hover:bg-green-700");
-          btn.disabled = false;
-        });
-    }
+  data.forEach(item => {
+    const title = item["Title"] || 'N/A';
+    const caption = item["Caption (texte)"] || '';
+    const platforms = item["Plateforme(s)"] || 'N/A';
+    const status = item["Status"] || 'N/A';
 
-    function extractSheetId(input) {
-      const idRegex = /[-\w]{25,}/;
-      const match = input.match(idRegex);
-      return match ? match[0] : null;
-    }
-
-    function displayData(data) {
- 	 		const container = document.getElementById('sheetData');
-  		container.innerHTML = '';
-
-  		if (!data || data.length === 0) {
-   			container.innerText = 'No data found in Google Sheets.';
-    		return;
-  		}
-
- 			data.forEach(item => {
-    		const title = item["Title"] || 'N/A';
-    		const caption = item["Caption (texte)"] || '';
-    		const platforms = item["Plateforme(s)"] || 'N/A';
-    		const status = item["Status"] || 'N/A';
-
-    		const div = document.createElement('div');
-    		div.className = 'entry border-b border-gray-300 py-2';
-    		div.innerHTML = `
-      		<strong>${title}</strong> — 
-      		<em>${caption}</em> on <strong>${platforms}</strong> [Status: ${status}]
-    		`;
-    		container.appendChild(div);
- 		 });
-		}
-
-
-      data.forEach(entry => {
-        const div = document.createElement('div');
-        div.className = 'entry border-b border-gray-300 py-2';
-        div.innerHTML = `
-          <strong>${entry.Platform || 'N/A'}</strong> — 
-          ${entry.Date || 'N/A'} at ${entry.Time || 'N/A'} : 
-          <em>${entry.Message || ''}</em>
-        `;
-        container.appendChild(div);
-      });
-    }
+    const div = document.createElement('div');
+    div.className = 'entry border-b border-gray-300 py-2';
+    div.innerHTML = `
+      <strong>${title}</strong> — 
+      <em>${caption}</em> on <strong>${platforms}</strong> [Status: ${status}]
+    `;
+    container.appendChild(div);
+  });
+}
   </script>
 </body>
 </html>
