@@ -151,17 +151,40 @@ function displayData(data) {
     return;
   }
 
+  // Icônes simples en emoji (tu peux remplacer par SVG si tu veux)
+  const platformIcons = {
+    facebook: "📘",
+    tiktok: "🎵"
+  };
+
   data.forEach(item => {
     const title = item["Title"] || 'N/A';
     const caption = item["Caption (texte)"] || '';
-    const platforms = item["Plateforme(s)"] || 'N/A';
+    const platformsRaw = item["Plateforme(s)"] || '';
     const status = item["Status"] || 'N/A';
+    const mediaUrl = item["Media URL (Drive)"] || '';
 
+    // Préparer les plateformes avec icônes
+    const platforms = platformsRaw.split(',').map(p => {
+      const key = p.trim().toLowerCase();
+      const icon = platformIcons[key] || "🔗";
+      return `<span class="inline-flex items-center gap-1 mr-3">${icon} ${p.trim()}</span>`;
+    }).join('');
+
+    // Rendre le mediaUrl cliquable
+    const mediaLink = mediaUrl
+      ? `<a href="${mediaUrl}" target="_blank" class="text-blue-600 hover:underline">View Media</a>`
+      : '';
+
+    // Créer la carte
     const div = document.createElement('div');
-    div.className = 'entry border-b border-gray-300 py-2';
+    div.className = 'entry border border-gray-300 rounded-lg p-4 mb-4 bg-white shadow-sm hover:shadow-md transition';
     div.innerHTML = `
-      <strong>${title}</strong> — 
-      <em>${caption}</em> on <strong>${platforms}</strong> [Status: ${status}]
+      <h3 class="font-bold text-lg mb-1">${title}</h3>
+      <p class="italic mb-2">${caption}</p>
+      <div class="mb-2">${platforms}</div>
+      <div class="mb-2"><strong>Status:</strong> ${status}</div>
+      <div>${mediaLink}</div>
     `;
     container.appendChild(div);
   });
