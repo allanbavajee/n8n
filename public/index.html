@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -9,66 +9,66 @@
 <body class="bg-neutral-100 flex items-center justify-center min-h-screen px-4 py-10">
   <div class="max-w-3xl w-full bg-white rounded-2xl shadow-lg p-8">
 
-    <!-- Titre dans un rectangle bleu -->
+    <!-- Title -->
     <div class="bg-blue-600 rounded-lg py-4 px-6 mb-6 text-center">
       <h1 class="text-4xl font-bold text-white">Social Flow 🚀</h1>
-      <p class="text-white text-base mt-3">Automatisez vos publications sociales depuis Google Sheets, en un clic.</p>
+      <p class="text-white text-base mt-3">Automate your social media posts from Google Sheets, in one click.</p>
     </div>
 
-    <!-- Schéma horizontal -->
+    <!-- How it works -->
     <div class="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200">
-      <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">🔄 Fonctionnement :</h2>
+      <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">🔄 How It Works:</h2>
       <div class="flex flex-col sm:flex-row items-center justify-center gap-6 text-center text-gray-700 text-sm">
         <div class="flex flex-col items-center">
           <div class="text-3xl">📥</div>
-          <p class="mt-1 max-w-xs">Ajoutez vos posts dans Sheets</p>
+          <p class="mt-1 max-w-xs">Add your posts in Google Sheets</p>
         </div>
         <div class="text-2xl sm:text-3xl">➡️</div>
         <div class="flex flex-col items-center">
           <div class="text-3xl">🔍</div>
-          <p class="mt-1 max-w-xs">Social Flow vérifie les entrées</p>
+          <p class="mt-1 max-w-xs">Social Flow checks your entries</p>
         </div>
         <div class="text-2xl sm:text-3xl">➡️</div>
         <div class="flex flex-col items-center">
           <div class="text-3xl">📤</div>
-          <p class="mt-1 max-w-xs">Les posts sont publiés automatiquement</p>
+          <p class="mt-1 max-w-xs">Your posts are automatically published</p>
         </div>
       </div>
     </div>
 
-    <!-- Input Google Sheet ID/URL avec aide centrée -->
-<div class="mb-6 text-center">
-  <label for="sheetInput" class="block font-semibold mb-2 text-center">
-    📎 Collez l'ID ou l'URL de votre Google Sheet :
-  </label>
-  <input
-    type="text"
-    id="sheetInput"
-    placeholder="Exemple : 1HdxIB4vFde1gcd01Cb74doAg2y3B58_wkC48uJ423dU"
-    class="w-full mb-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-center"
-    value=""
-  />
-  <p class="text-sm text-gray-600 mt-2">
-    🔍 L’<strong>ID</strong> se trouve dans l’URL de votre feuille Google Sheets :<br>
-    <code class="bg-gray-100 px-2 py-1 rounded text-gray-700 inline-block mt-2">
-      https://docs.google.com/spreadsheets/d/<strong class="text-blue-600">VOTRE_ID_ICI</strong>/edit
-    </code>
-  </p>
-</div>
+    <!-- Google Sheet input -->
+    <div class="mb-6 text-center">
+      <label for="sheetInput" class="block font-semibold mb-2 text-center">
+        📎 Paste your Google Sheet ID or URL:
+      </label>
+      <input
+        type="text"
+        id="sheetInput"
+        placeholder="Example: 1HdxIB4vFde1gcd01Cb74doAg2y3B58_wkC48uJ423dU"
+        class="w-full mb-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-center"
+        value=""
+      />
+      <p class="text-sm text-gray-600 mt-2">
+        🔍 The <strong>ID</strong> is found in your Google Sheet URL:<br>
+        <code class="bg-gray-100 px-2 py-1 rounded text-gray-700 inline-block mt-2">
+          https://docs.google.com/spreadsheets/d/<strong class="text-blue-600">YOUR_ID_HERE</strong>/edit
+        </code>
+      </p>
+    </div>
 
-    <!-- Bouton + statut -->
+    <!-- Button + status -->
     <div class="flex flex-col items-center">
       <button
-        onclick="lancerSocialFlow()"
+        onclick="startSocialFlow()"
         id="launchBtn"
         class="w-full sm:w-auto px-6 py-3 rounded-lg font-semibold text-white bg-green-600 hover:bg-green-700 shadow-md transition"
       >
-        Lancer Social Flow
+        Launch Social Flow
       </button>
-      <p id="statusText" class="mt-4 text-sm text-gray-700">En attente...</p>
+      <p id="statusText" class="mt-4 text-sm text-gray-700">Waiting...</p>
     </div>
 
-    <!-- Zone affichage des données Google Sheets -->
+    <!-- Data display -->
     <div id="sheetData" class="mt-8 p-4 bg-gray-100 rounded-lg max-h-60 overflow-auto text-left text-gray-800"></div>
 
   </div>
@@ -76,45 +76,45 @@
   <script>
     const APPS_SCRIPT_BASE_URL = 'https://script.google.com/macros/s/AKfycbzTzVvEUguu8YBtMS8CSrjR_paDmgCk_EHqa-afSpOEA7LP2FuinWVaFXeTBpEttNIB/exec';
 
-    function lancerSocialFlow() {
+    function startSocialFlow() {
       const btn = document.getElementById("launchBtn");
       const status = document.getElementById("statusText");
       const sheetInput = document.getElementById("sheetInput");
       const sheetIdRaw = sheetInput.value.trim();
 
       if (!sheetIdRaw) {
-        alert("Veuillez saisir un ID ou URL valide de Google Sheet.");
+        alert("Please enter a valid Google Sheet ID or URL.");
         return;
       }
 
       const sheetId = extractSheetId(sheetIdRaw);
       if (!sheetId) {
-        alert("L'ID de Google Sheet est invalide.");
+        alert("Invalid Google Sheet ID.");
         return;
       }
 
       btn.disabled = true;
       btn.classList.add("bg-gray-400", "cursor-wait");
-      btn.innerText = "En cours...";
-      status.innerText = "Recherche des données...";
+      btn.innerText = "Processing...";
+      status.innerText = "Fetching data...";
       document.getElementById("sheetData").innerHTML = "";
 
       fetch(`${APPS_SCRIPT_BASE_URL}?sheetId=${sheetId}`)
         .then(response => response.json())
         .then(data => {
           if (data.error) {
-            status.innerText = "Erreur : " + data.error;
+            status.innerText = "Error: " + data.error;
             return;
           }
-          afficherDonnees(data);
-          status.innerText = "Publication effectuée avec succès ✅";
+          displayData(data);
+          status.innerText = "Data fetched successfully ✅";
         })
         .catch(err => {
-          status.innerText = "Erreur lors de la récupération des données.";
+          status.innerText = "Error while fetching data.";
           console.error(err);
         })
         .finally(() => {
-          btn.innerText = "Lancer Social Flow";
+          btn.innerText = "Launch Social Flow";
           btn.classList.remove("bg-gray-400", "cursor-wait");
           btn.classList.add("bg-green-600", "hover:bg-green-700");
           btn.disabled = false;
@@ -127,12 +127,12 @@
       return match ? match[0] : null;
     }
 
-    function afficherDonnees(data) {
+    function displayData(data) {
       const container = document.getElementById('sheetData');
       container.innerHTML = '';
 
       if (!data || data.length === 0) {
-        container.innerText = 'Aucune donnée trouvée dans Google Sheets.';
+        container.innerText = 'No data found in Google Sheets.';
         return;
       }
 
@@ -140,8 +140,8 @@
         const div = document.createElement('div');
         div.className = 'entry border-b border-gray-300 py-2';
         div.innerHTML = `
-          <strong>${entry.Plateforme || 'N/A'}</strong> — 
-          ${entry.Date || 'N/A'} à ${entry.Heure || 'N/A'} : 
+          <strong>${entry.Platform || 'N/A'}</strong> — 
+          ${entry.Date || 'N/A'} at ${entry.Time || 'N/A'} : 
           <em>${entry.Message || ''}</em>
         `;
         container.appendChild(div);
