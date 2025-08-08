@@ -36,9 +36,22 @@
       </div>
     </div>
 
-    <!-- Google Sheet input -->
+    <!-- Google Apps Script URL input -->
     <div class="mb-6 text-center">
-      <label for="sheetInput" class="block font-semibold mb-2 text-center">
+      <label for="scriptUrl" class="block font-semibold mb-2">
+        🔗 Paste your Google Apps Script WebApp URL:
+      </label>
+      <input
+        type="text"
+        id="scriptUrl"
+        placeholder="Example: https://script.google.com/macros/s/XXXXX/exec"
+        class="w-full mb-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-center"
+      />
+    </div>
+
+    <!-- Google Sheet ID input -->
+    <div class="mb-6 text-center">
+      <label for="sheetInput" class="block font-semibold mb-2">
         📎 Paste your Google Sheet ID or URL:
       </label>
       <input
@@ -46,10 +59,9 @@
         id="sheetInput"
         placeholder="Example: 1HdxIB4vFde1gcd01Cb74doAg2y3B58_wkC48uJ423dU"
         class="w-full mb-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-center"
-        value=""
       />
       <p class="text-sm text-gray-600 mt-2">
-        🔍 The <strong>ID</strong> is found in your Google Sheet URL:<br>
+        The <strong>ID</strong> is found in your Google Sheet URL:<br>
         <code class="bg-gray-100 px-2 py-1 rounded text-gray-700 inline-block mt-2">
           https://docs.google.com/spreadsheets/d/<strong class="text-blue-600">YOUR_ID_HERE</strong>/edit
         </code>
@@ -74,13 +86,16 @@
   </div>
 
   <script>
-    const APPS_SCRIPT_BASE_URL = 'https://script.google.com/macros/s/AKfycbwdKDJk9BrHLAd0km2bNzOpniL9QF4Ll_oVhJGyMkZKsPeIkuEvHEbzBBkOnDO7q7Qv/exec';
-
     function startSocialFlow() {
       const btn = document.getElementById("launchBtn");
       const status = document.getElementById("statusText");
-      const sheetInput = document.getElementById("sheetInput");
-      const sheetIdRaw = sheetInput.value.trim();
+      const scriptUrl = document.getElementById("scriptUrl").value.trim();
+      const sheetIdRaw = document.getElementById("sheetInput").value.trim();
+
+      if (!scriptUrl) {
+        alert("Please enter your Google Apps Script WebApp URL.");
+        return;
+      }
 
       if (!sheetIdRaw) {
         alert("Please enter a valid Google Sheet ID or URL.");
@@ -99,7 +114,7 @@
       status.innerText = "Fetching data...";
       document.getElementById("sheetData").innerHTML = "";
 
-      fetch(`${APPS_SCRIPT_BASE_URL}?sheetId=${sheetId}`)
+      fetch(`${scriptUrl}?sheetId=${sheetId}`)
         .then(response => response.json())
         .then(data => {
           if (data.error) {
